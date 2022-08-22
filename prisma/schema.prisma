@@ -1,0 +1,24 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  fees        Fee[]   @relation("fees")
+  default_fee Fee?    @relation("default_fee")
+}
+
+model Fee {
+  id             Int      @id @default(autoincrement())
+  total          Float    @default(0)
+  product_id     Int
+  product        Product  @relation(name: "fees", fields: [product_id], references: [id], onDelete: Cascade)
+  defaultable    Product? @relation(name: "default_fee", fields: [defaultable_id], references: [id])
+  defaultable_id Int?     @unique
+}
